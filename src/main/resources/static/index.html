@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AQI Search</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; color: #460962; background-color: bisque; }
+        input, button { padding: 8px; margin: 5px; }
+        #result { margin-top: 20px; }
+        button{ background-color: rgb(240, 149, 198);}
+    </style>
+</head>
+<body>
+    <h2>Air Quality Index Search</h2>
+    <input type="text" id="city" placeholder="Enter city name" />
+    <button onclick="searchAQI()">Search</button>
+
+    <div id="result"></div>
+
+    <script>
+        function searchAQI() {
+            const city = document.getElementById('city').value;
+            if (!city) return alert("Enter a city name!");
+
+            fetch(`http://localhost:8080/aqi?city=${city}`)
+            .then(res => res.json())
+                .then(data => {
+                    if (!data.city) {
+                        document.getElementById('result').innerHTML = "No data found!";
+                        return;
+                    }
+                    document.getElementById('result').innerHTML = `
+                        <h3>${data.city}</h3>
+                        <p><strong>AQI:</strong> ${data.aqi}</p>
+                        <p><strong>PM2.5:</strong> ${data.pm25}</p>
+                        <p><strong>PM10:</strong> ${data.pm10}</p>
+                        <p><strong>Dominant Pollutant:</strong> ${data.dominentPollutant}</p>
+                    `;
+                })
+                .catch(err => {
+                    console.error(err);
+                    document.getElementById('result').innerHTML = "Error fetching data!";
+                });
+        }
+    </script>
+</body>
+</html>
